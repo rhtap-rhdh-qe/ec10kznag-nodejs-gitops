@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ec10kznag-nodejs-stage
+  namespace: rhtap-gitops
+  finalizers: ["resources-finalizer.argocd.argoproj.io"] 
+spec:
+  project: default
+  source:
+    path: ./components/ec10kznag-nodejs/overlays/stage
+    repoURL: https://github.com/rhtap-rhdh-qe/ec10kznag-nodejs-gitops.git
+    targetRevision: main
+  destination:
+    namespace: rhtap-app-stage
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels: 
+        argocd.argoproj.io/managed-by: rhtap-gitops
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+
